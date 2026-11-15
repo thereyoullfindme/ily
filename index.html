@@ -2,790 +2,558 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Aku Minta Maaf Sayang 🥺👉👈</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FR</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Fredoka & Quicksand untuk kesan bulat, lucu, dan hangat -->
+    <!-- Google Fonts: Quicksand & Caveat (untuk tulisan tangan di Polaroid) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
-    <!-- Canvas Confetti untuk perayaan -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti untuk efek perayaan -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Tone.js untuk efek suara imut tanpa file eksternal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 
     <style>
-        :root {
-            --bg-cream: #FFF8F5;
-            --soft-pink: #FFE4E6;
-            --coral-pink: #FB7185;
-            --mint-green: #34D399;
-        }
-
-        html, body {
+        body {
             font-family: 'Quicksand', sans-serif;
-            background: linear-gradient(160deg, #FFF5F5 0%, #FFE4E6 55%, #FEF3C7 100%);
-            min-height: 100dvh;
-            width: 100%;
+            background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 45%, #fef3c7 100%);
             overflow-x: hidden;
             user-select: none;
-            -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
         }
 
-        /* Kunci scroll saat fase bermain tombol kabur di HP agar tidak geser tak sengaja */
-        body.lock-scroll {
-            height: 100dvh;
-            overflow: hidden;
+        .font-handwriting {
+            font-family: 'Caveat', cursive;
         }
 
-        h1, h2, h3, .font-fredoka {
-            font-family: 'Fredoka', sans-serif;
-        }
-
-        /* Animasi melayang lembut untuk karakter */
+        /* Animasi mengambang untuk karakter beruang/kucing */
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(2deg); }
+            50% { transform: translateY(-8px) rotate(1.5deg); }
         }
-
         .animate-float {
             animation: float 3s ease-in-out infinite;
         }
 
-        /* Animasi telinga beruang goyang */
-        @keyframes earWiggleLeft {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-6deg); }
-            75% { transform: rotate(4deg); }
-        }
-        @keyframes earWiggleRight {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(6deg); }
-            75% { transform: rotate(-4deg); }
-        }
-        .ear-left {
-            transform-origin: 62px 58px;
-            animation: earWiggleLeft 3.5s ease-in-out infinite;
-        }
-        .ear-right {
-            transform-origin: 158px 58px;
-            animation: earWiggleRight 3.5s ease-in-out infinite;
-        }
-
-        /* Animasi air mata jatuh di SVG */
+        /* Animasi air mata menetes */
         @keyframes tearDrop {
-            0% { transform: translateY(0); opacity: 0; }
+            0% { transform: translateY(0) scale(0.8); opacity: 0; }
             30% { opacity: 1; }
-            100% { transform: translateY(15px); opacity: 0; }
+            100% { transform: translateY(18px) scale(1.1); opacity: 0; }
         }
-
         .tear-left {
-            animation: tearDrop 1.7s infinite ease-in;
+            animation: tearDrop 1.8s infinite ease-in;
         }
-
         .tear-right {
-            animation: tearDrop 1.7s infinite ease-in 0.85s;
+            animation: tearDrop 1.8s infinite ease-in 0.9s;
         }
 
-        /* Mode nangis deras saat tombol Enggak ditekan berkali-kali */
-        body.super-sad .tear-left,
-        body.super-sad .tear-right {
-            animation-duration: 0.75s;
+        /* Animasi denyut lembut untuk tombol Maafin & Easter Egg */
+        @keyframes softPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.4); }
+            50% { transform: scale(1.04); box-shadow: 0 15px 30px -5px rgba(244, 63, 94, 0.6); }
+        }
+        .btn-pulse {
+            animation: softPulse 2s infinite ease-in-out;
         }
 
-        /* Animasi kelopak hati di background */
+        /* Efek Polaroid */
+        .polaroid-card {
+            background: #ffffff;
+            padding: 14px 14px 36px 14px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(244, 63, 94, 0.15);
+            transform: rotate(-2deg);
+            transition: transform 0.3s ease;
+        }
+        .polaroid-card:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        /* Latar belakang hati melayang */
         .floating-heart {
             position: fixed;
-            bottom: -20px;
+            bottom: -40px;
             pointer-events: none;
-            z-index: 1;
+            z-index: 0;
             animation: riseUp linear forwards;
         }
-
-        /* Animasi hati saat layar disentuh (tap anywhere) */
-        .tap-heart {
-            position: fixed;
-            pointer-events: none;
-            z-index: 60;
-            animation: tapPop 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-
-        @keyframes tapPop {
-            0% {
-                transform: translate(-50%, -50%) scale(0.4) rotate(-10deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-50%, -140%) scale(1.45) rotate(12deg);
-                opacity: 0;
-            }
-        }
-
         @keyframes riseUp {
-            0% {
-                transform: translateY(0) scale(0.8) rotate(0deg);
-                opacity: 0;
-            }
-            20% {
-                opacity: 0.65;
-            }
-            80% {
-                opacity: 0.4;
-            }
-            100% {
-                transform: translateY(-105dvh) scale(1.15) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        /* Kartu kupon efek sentuhan HP */
-        .coupon-card {
-            transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .coupon-card:active {
-            transform: scale(0.97);
-        }
-        .coupon-card.selected {
-            border-color: #F43F5E;
-            background-color: #FFF1F2;
-            box-shadow: 0 8px 16px -4px rgba(244, 63, 94, 0.22);
-        }
-        .coupon-card.selected .check-badge {
-            background-color: #F43F5E;
-            border-color: #F43F5E;
-            color: #FFFFFF;
-            transform: scale(1.08);
-        }
-
-        /* Transisi tombol kabur murni menggunakan left & top tanpa transform */
-        #btn-no {
-            transition: left 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
-                        top 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
-                        background-color 0.15s ease;
-            touch-action: none;
-        }
-
-        /* Safe area padding untuk layar HP modern (iPhone notch / gesture bar) */
-        .safe-mobile-wrapper {
-            padding-top: max(14px, env(safe-area-inset-top));
-            padding-bottom: max(18px, env(safe-area-inset-bottom));
-            padding-left: max(14px, env(safe-area-inset-left));
-            padding-right: max(14px, env(safe-area-inset-right));
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
     </style>
 </head>
-<body class="lock-scroll flex items-center justify-center safe-mobile-wrapper relative">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 relative text-slate-700">
 
     <!-- Container Hati Melayang di Latar Belakang -->
     <div id="hearts-bg" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div>
 
-    <!-- KARTU UTAMA (Proporsional Mobile-First max-w-[420px]) -->
-    <main id="main-card" class="relative z-10 w-full max-w-[420px] bg-white/95 backdrop-blur-md rounded-[28px] shadow-2xl border-[3px] border-pink-100 p-5 text-center transition-all duration-500">
+    <!-- Tombol Musik/Suara Kecil di Pojok Kanan Atas -->
+    <button id="sound-toggle" onclick="toggleSound()" title="Nyalakan Efek Suara Gemas" class="fixed top-4 right-4 z-40 bg-white/80 backdrop-blur-md p-2.5 rounded-full shadow-md border border-rose-200 text-rose-500 hover:bg-rose-50 transition active:scale-90">
+        <span id="sound-icon" class="text-lg">🔇</span>
+    </button>
+
+    <!-- Easter Egg Trigger Tersembunyi di Pojok Kiri Atas -->
+    <button id="easter-egg-btn" onclick="openEasterEgg()" class="fixed top-4 left-4 z-40 bg-white/85 backdrop-blur-md px-3 py-1.5 rounded-full shadow-md border border-amber-200 text-xs font-bold text-amber-600 flex items-center gap-1.5 hover:bg-amber-50 transition animate-bounce">
+        <span>🤫</span>
+        <span id="easter-egg-label">Jangan Diklik!</span>
+    </button>
+
+    <!-- KARTU UTAMA (HALAMAN 1: PERMOHONAN MAAF) -->
+    <main id="apology-card" class="relative z-10 w-full max-w-md bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl border-2 border-rose-100 p-6 sm:p-8 text-center transition-all duration-500">
         
-        <!-- ========================================== -->
-        <!-- LAYAR 1: SURAT PERMINTAAN MAAF             -->
-        <!-- ========================================== -->
-        <section id="apology-screen" class="space-y-3.5">
-            <!-- Badge Kecil Atas -->
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-600 text-xs font-bold tracking-wide">
-                <span>💌</span> Khusus Buat Kecayanganku
-            </div>
+        <!-- Ilustrasi SVG Karakter Beruang Sedih / Memelas -->
+        <div class="w-40 h-40 mx-auto mb-3 animate-float relative">
+            <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md">
+                <!-- Telinga Kiri & Kanan -->
+                <circle cx="52" cy="58" r="24" fill="#d97706" />
+                <circle cx="52" cy="58" r="13" fill="#fde68a" />
+                <circle cx="148" cy="58" r="24" fill="#d97706" />
+                <circle cx="148" cy="58" r="13" fill="#fde68a" />
+                
+                <!-- Kepala Beruang -->
+                <ellipse cx="100" cy="105" rx="68" ry="60" fill="#f59e0b" />
+                
+                <!-- Pipi Merona -->
+                <ellipse cx="58" cy="118" rx="14" ry="8" fill="#fb7185" opacity="0.6" />
+                <ellipse cx="142" cy="118" rx="14" ry="8" fill="#fb7185" opacity="0.6" />
+                
+                <!-- Area Moncong -->
+                <ellipse cx="100" cy="122" rx="28" ry="22" fill="#fef3c7" />
+                
+                <!-- Hidung -->
+                <ellipse cx="100" cy="113" rx="10" ry="7" fill="#451a03" />
+                <ellipse cx="97" cy="111" rx="3" ry="2" fill="#ffffff" opacity="0.7" />
+                
+                <!-- Mulut Sedih Bergetar -->
+                <path id="bear-mouth" d="M 88 132 Q 100 123 112 132" stroke="#451a03" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                
+                <!-- Mata Kiri & Kanan (Berkaca-kaca) -->
+                <circle cx="72" cy="96" r="9" fill="#1e293b" />
+                <circle cx="69" cy="93" r="3.5" fill="#ffffff" />
+                <circle cx="75" cy="98" r="1.5" fill="#ffffff" />
+                
+                <circle cx="128" cy="96" r="9" fill="#1e293b" />
+                <circle cx="125" cy="93" r="3.5" fill="#ffffff" />
+                <circle cx="131" cy="98" r="1.5" fill="#ffffff" />
 
-            <!-- Ilustrasi SVG Karakter Beruang Sedih Megang Bunga -->
-            <div id="bear-stage" class="flex justify-center">
-                <div class="w-36 h-36 animate-float relative">
-                    <svg viewBox="0 0 220 220" class="w-full h-full drop-shadow-md" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Telinga Kiri & Kanan (Animasi Goyang) -->
-                        <g class="ear-left">
-                            <circle cx="62" cy="58" r="24" fill="#C68B59" stroke="#784B2A" stroke-width="4"/>
-                            <circle cx="62" cy="58" r="13" fill="#E6B89C"/>
-                        </g>
-                        <g class="ear-right">
-                            <circle cx="158" cy="58" r="24" fill="#C68B59" stroke="#784B2A" stroke-width="4"/>
-                            <circle cx="158" cy="58" r="13" fill="#E6B89C"/>
-                        </g>
+                <!-- Alis Sedih -->
+                <path d="M 58 82 Q 72 76 82 84" stroke="#78350f" stroke-width="3.5" fill="none" stroke-linecap="round" />
+                <path d="M 142 82 Q 128 76 118 84" stroke="#78350f" stroke-width="3.5" fill="none" stroke-linecap="round" />
 
-                        <!-- Badan Beruang -->
-                        <path d="M55 195 C55 140, 165 140, 165 195 Z" fill="#C68B59" stroke="#784B2A" stroke-width="4"/>
-                        <ellipse cx="110" cy="175" rx="32" ry="22" fill="#F3D5B5"/>
+                <!-- Air Mata Animasi -->
+                <path class="tear-left" d="M 65 106 Q 60 116 65 120 Q 70 116 65 106 Z" fill="#38bdf8" />
+                <path class="tear-right" d="M 135 106 Q 130 116 135 120 Q 140 116 135 106 Z" fill="#38bdf8" />
 
-                        <!-- Kepala Beruang -->
-                        <ellipse cx="110" cy="102" rx="64" ry="54" fill="#D49A6A" stroke="#784B2A" stroke-width="4"/>
+                <!-- Tangan Memohon (Paws) -->
+                <ellipse cx="78" cy="162" rx="18" ry="14" fill="#d97706" stroke="#b45309" stroke-width="2" />
+                <ellipse cx="122" cy="162" rx="18" ry="14" fill="#d97706" stroke="#b45309" stroke-width="2" />
+                <!-- Hati kecil di antara tangan -->
+                <path d="M 100 156 C 95 148, 84 152, 100 166 C 116 152, 105 148, 100 156 Z" fill="#f43f5e" />
+            </svg>
+        </div>
 
-                        <!-- Pipi Merona -->
-                        <ellipse cx="70" cy="112" rx="11" ry="6" fill="#FF8FA3" opacity="0.75"/>
-                        <ellipse cx="150" cy="112" rx="11" ry="6" fill="#FF8FA3" opacity="0.75"/>
+        <!-- Judul & Pesan Permohonan Maaf -->
+        <span class="inline-block bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1 rounded-full mb-2 tracking-wide">
+            IMPROTANT MESSAGE 🥺
+        </span>
+        <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-3 leading-tight">
+            Aku Minta Maaf 🥺👉👈
+        </h1>
+        <p id="apology-subtitle" class="text-sm sm:text-base text-slate-600 mb-6 leading-relaxed">
+            Maafin aku ya udah bikin kamu kesel :( Lagi jauh gini rasanya ga nyaman banget kalo kamu ngambek :") Baikan yuk? 🤍
+        </p>
 
-                        <!-- Moncong -->
-                        <ellipse cx="110" cy="115" rx="24" ry="18" fill="#FFF1E6"/>
-                        <!-- Hidung -->
-                        <ellipse cx="110" cy="107" rx="8" ry="5.5" fill="#5C3A21"/>
-                        <!-- Mulut Sedih / Memelas -->
-                        <path id="bear-mouth" d="M100 124 Q110 116 120 124" fill="none" stroke="#5C3A21" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- Kotak Status Lucu saat tombol "Enggak" ditekan -->
+        <div id="plead-banner" class="hidden mb-5 bg-amber-50 border border-amber-200 text-amber-800 text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-2xl transition-all">
+            <!-- Diisi otomatis lewat JS -->
+        </div>
 
-                        <!-- Alis Memelas (Puppy Eyes) -->
-                        <path d="M72 82 Q83 76 92 84" fill="none" stroke="#5C3A21" stroke-width="3.5" stroke-linecap="round"/>
-                        <path d="M148 82 Q137 76 128 84" fill="none" stroke="#5C3A21" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- Area Tombol Interaktif -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 min-h-[110px] relative">
+            <!-- Tombol Maafin (Membesar tiap kali tombol Enggak dihindari) -->
+            <button id="btn-forgive" onclick="acceptApology()" class="btn-pulse bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3.5 px-7 rounded-2xl shadow-lg transition-all duration-300 text-base sm:text-lg z-20 flex items-center justify-center gap-2">
+                <span>Iyaaa, Aku Maafin ❤️</span>
+            </button>
 
-                        <!-- Mata Berkilau -->
-                        <circle cx="83" cy="96" r="8" fill="#3D2516"/>
-                        <circle cx="80.5" cy="93.5" r="3" fill="#FFFFFF"/>
-                        <circle cx="85" cy="98" r="1.3" fill="#FFFFFF"/>
+            <!-- Tombol Enggak / Masih Marah (Kabur & Berubah Teks) -->
+            <button id="btn-reject" onmouseover="dodgeButton()" onclick="dodgeButton()" ontouchstart="dodgeButton(event)" class="bg-slate-200 hover:bg-slate-300 text-slate-600 font-semibold py-3 px-5 rounded-2xl transition-all duration-200 text-sm z-10">
+                Masih Marah 😤
+            </button>
+        </div>
 
-                        <circle cx="137" cy="96" r="8" fill="#3D2516"/>
-                        <circle cx="134.5" cy="93.5" r="3" fill="#FFFFFF"/>
-                        <circle cx="139" cy="98" r="1.3" fill="#FFFFFF"/>
+        <!-- Hint Kecil untuk Easter Egg setelah beberapa kali klik -->
 
-                        <!-- Air Mata Animasi -->
-                        <path class="tear-left" d="M74 103 C74 103, 70 110, 74 113 C78 110, 74 103, 74 103 Z" fill="#60A5FA"/>
-                        <path class="tear-right" d="M146 103 C146 103, 142 110, 146 113 C150 110, 146 103, 146 103 Z" fill="#60A5FA"/>
-
-                        <!-- Papan Hati Kecil (Muncul pas super sedih) -->
-                        <g id="bear-plea-heart" class="hidden" transform="translate(92, 146)">
-                            <path d="M18 8 C14 0, 2 2, 2 11 C2 20, 18 29, 18 29 C18 29, 34 20, 34 11 C34 2, 22 0, 18 8 Z" fill="#FB7185" stroke="#BE123C" stroke-width="2"/>
-                        </g>
-
-                        <!-- Tangan Kiri Megang Bunga -->
-                        <circle cx="72" cy="162" r="15" fill="#D49A6A" stroke="#784B2A" stroke-width="3.5"/>
-                        <!-- Tangan Kanan -->
-                        <circle cx="148" cy="162" r="15" fill="#D49A6A" stroke="#784B2A" stroke-width="3.5"/>
-
-                        <!-- Bunga Maaf -->
-                        <g transform="translate(46, 118) rotate(-18)">
-                            <line x1="20" y1="22" x2="20" y2="62" stroke="#10B981" stroke-width="4" stroke-linecap="round"/>
-                            <ellipse cx="13" cy="43" rx="7" ry="4" transform="rotate(-25 13 43)" fill="#34D399"/>
-                            <circle cx="20" cy="11" r="7" fill="#FB7185"/>
-                            <circle cx="29" cy="18" r="7" fill="#FB7185"/>
-                            <circle cx="26" cy="28" r="7" fill="#FB7185"/>
-                            <circle cx="14" cy="28" r="7" fill="#FB7185"/>
-                            <circle cx="11" cy="18" r="7" fill="#FB7185"/>
-                            <circle cx="20" cy="20" r="6" fill="#FBBF24"/>
-                        </g>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Judul Permintaan Maaf -->
-            <div class="space-y-1.5">
-                <h1 class="text-2xl font-bold text-rose-600 leading-tight">
-                    Aku Minta Maaf 🥺👉👈
-                </h1>
-                <p id="apology-subtitle" class="text-gray-600 text-sm leading-relaxed px-1">
-                    Maafin aku ya udah bikin kamu kesel :( Lagi jauh gini rasanya ga nyaman banget kalo kamu ngambek :") Baikan yuk? 🤍
-                </p>
-            </div>
-
-            <!-- Indikator Rayuan Dinamis (Muncul kalau tombol 'Enggak' disentuh) -->
-            <div id="plea-bubble" class="hidden bg-amber-50 border-2 border-amber-200 text-amber-800 rounded-2xl px-3.5 py-2 text-xs font-bold shadow-sm transition-all">
-                🥺 Masa gak dimaafin sih? Hati beruangnya ancur nih...
-            </div>
-
-            <!-- Area Tombol Interaktif (Touch-friendly min height 48px) -->
-            <div id="buttons-wrapper" class="pt-2 pb-1 flex flex-col items-center justify-center gap-3 min-h-[115px]">
-                <!-- Tombol Maafin (Akan membesar setiap tombol Enggak disentuh) -->
-                <button id="btn-yes" onclick="acceptApology()"
-                    class="w-full max-w-[260px] min-h-[50px] bg-gradient-to-r from-emerald-400 to-teal-500 active:from-emerald-500 active:to-teal-600 text-white font-fredoka font-semibold px-5 py-3 rounded-2xl shadow-lg shadow-emerald-200/80 transition-all duration-300 cursor-pointer z-20 flex items-center justify-center gap-2 text-base">
-                    <span>Iyaaa, Aku Maafin ❤️</span>
-                </button>
-
-                <!-- Tombol Enggak Mau (Akan dipindahkan ke document.body dengan position: fixed saat disentuh) -->
-                <button id="btn-no" type="button"
-                    class="min-h-[44px] bg-rose-100 active:bg-rose-200 text-rose-600 border-2 border-rose-200 font-fredoka font-semibold px-5 py-2.5 rounded-2xl shadow-md cursor-pointer z-30 text-sm">
-                    Enggak Mau! 😤
-                </button>
-            </div>
-        </section>
-
-        <!-- ========================================== -->
-        <!-- LAYAR 2: PERAYAAN & KUPON BAIKAN LDR       -->
-        <!-- ========================================== -->
-        <section id="celebration-screen" class="hidden space-y-4 text-center">
-            <!-- Ilustrasi Beruang Bahagia -->
-            <div class="flex justify-center">
-                <div class="w-28 h-28 animate-bounce">
-                    <svg viewBox="0 0 220 220" class="w-full h-full drop-shadow-md" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Hati di atas kepala -->
-                        <path d="M110 38 C103 25, 85 28, 85 42 C85 55, 110 68, 110 68 C110 68, 135 55, 135 42 C135 28, 117 25, 110 38 Z" fill="#F43F5E"/>
-                        
-                        <!-- Telinga -->
-                        <circle cx="62" cy="74" r="22" fill="#C68B59" stroke="#784B2A" stroke-width="4"/>
-                        <circle cx="62" cy="74" r="12" fill="#E6B89C"/>
-                        <circle cx="158" cy="74" r="22" fill="#C68B59" stroke="#784B2A" stroke-width="4"/>
-                        <circle cx="158" cy="74" r="12" fill="#E6B89C"/>
-
-                        <!-- Badan -->
-                        <path d="M60 205 C60 155, 160 155, 160 205 Z" fill="#C68B59" stroke="#784B2A" stroke-width="4"/>
-                        
-                        <!-- Kepala -->
-                        <ellipse cx="110" cy="116" rx="62" ry="52" fill="#D49A6A" stroke="#784B2A" stroke-width="4"/>
-
-                        <!-- Pipi Merona -->
-                        <ellipse cx="70" cy="126" rx="12" ry="7" fill="#FF758F" opacity="0.85"/>
-                        <ellipse cx="150" cy="126" rx="12" ry="7" fill="#FF758F" opacity="0.85"/>
-
-                        <!-- Moncong & Senyum Lebar -->
-                        <ellipse cx="110" cy="128" rx="23" ry="17" fill="#FFF1E6"/>
-                        <ellipse cx="110" cy="120" rx="8" ry="5" fill="#5C3A21"/>
-                        <path d="M98 130 Q110 144 122 130" fill="#FB7185" stroke="#5C3A21" stroke-width="3" stroke-linecap="round"/>
-
-                        <!-- Mata Melengkung Bahagia (^ ^) -->
-                        <path d="M74 110 Q83 98 92 110" fill="none" stroke="#3D2516" stroke-width="4" stroke-linecap="round"/>
-                        <path d="M128 110 Q137 98 146 110" fill="none" stroke="#3D2516" stroke-width="4" stroke-linecap="round"/>
-
-                        <!-- Tangan Mengangkat ke Atas (Hore!) -->
-                        <circle cx="52" cy="145" r="14" fill="#D49A6A" stroke="#784B2A" stroke-width="3.5"/>
-                        <circle cx="168" cy="145" r="14" fill="#D49A6A" stroke="#784B2A" stroke-width="3.5"/>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Ucapan Terima Kasih -->
-            <div>
-                <h2 class="text-xl font-bold text-rose-600">
-                    Yeay! Makasih Udah Maafin! 🥰🥳
-                </h2>
-                <p class="text-gray-600 text-xs leading-relaxed mt-1">
-                    Maacii yaa :") Pilih <strong>Kupon Baikan</strong> di bawahhh (boleh pilih lebih dari catu):
-                </p>
-            </div>
-
-            <!-- Daftar Pilihan Kupon Baikan -->
-            <div class="space-y-2 text-left">
-                <div onclick="toggleCoupon(this, 'Traktir Makan 🍔')"
-                    class="coupon-card cursor-pointer border-2 border-pink-200 bg-white rounded-2xl p-3 flex items-center justify-between gap-2.5">
-                    <div class="flex items-center gap-2.5">
-                        <span class="text-2xl">🍔</span>
-                        <div>
-                            <div class="font-bold text-gray-800 text-xs">Traktir Makan</div>
-                            <div class="text-[11px] text-gray-500">Bebas pilih makanan & minuman favoritmuuu</div>
-                        </div>
-                    </div>
-                    <div class="check-badge w-6 h-6 rounded-full border-2 border-pink-300 flex items-center justify-center text-transparent text-xs font-bold transition-all shrink-0">✓</div>
-                </div>
-
-                <div onclick="toggleCoupon(this, 'Call Sepuasnya 📞')"
-                    class="coupon-card cursor-pointer border-2 border-pink-200 bg-white rounded-2xl p-3 flex items-center justify-between gap-2.5">
-                    <div class="flex items-center gap-2.5">
-                        <span class="text-2xl">📞</span>
-                        <div>
-                            <div class="font-bold text-gray-800 text-xs">Call Sepuasnya</div>
-                            <div class="text-[11px] text-gray-500">Temenin ngobrol sampe ketidurannn</div>
-                        </div>
-                    </div>
-                    <div class="check-badge w-6 h-6 rounded-full border-2 border-pink-300 flex items-center justify-center text-transparent text-xs font-bold transition-all shrink-0">✓</div>
-                </div>
-
-                <div onclick="toggleCoupon(this, 'Mabar ML Sampe Lemes 🎮')"
-                    class="coupon-card cursor-pointer border-2 border-pink-200 bg-white rounded-2xl p-3 flex items-center justify-between gap-2.5">
-                    <div class="flex items-center gap-2.5">
-                        <span class="text-2xl">🎮</span>
-                        <div>
-                            <div class="font-bold text-gray-800 text-xs">Mabar ML Sampe Lemes</div>
-                            <div class="text-[11px] text-gray-500">Push rank kutemeninnn</div>
-                        </div>
-                    </div>
-                    <div class="check-badge w-6 h-6 rounded-full border-2 border-pink-300 flex items-center justify-center text-transparent text-xs font-bold transition-all shrink-0">✓</div>
-                </div>
-
-                <div onclick="toggleCoupon(this, 'Bebas Tium 100x 😘')"
-                    class="coupon-card cursor-pointer border-2 border-pink-200 bg-white rounded-2xl p-3 flex items-center justify-between gap-2.5">
-                    <div class="flex items-center gap-2.5">
-                        <span class="text-2xl">😘</span>
-                        <div>
-                            <div class="font-bold text-gray-800 text-xs">Bebas Tium 100x</div>
-                            <div class="text-[11px] text-gray-500">Tium tebelum bobo cepuasnyaaa</div>
-                        </div>
-                    </div>
-                    <div class="check-badge w-6 h-6 rounded-full border-2 border-pink-300 flex items-center justify-center text-transparent text-xs font-bold transition-all shrink-0">✓</div>
-                </div>
-            </div>
-
-            <!-- Input Pesan Tambahan dari Pacar -->
-            <div class="text-left space-y-1">
-                <label for="custom-note" class="block text-xs font-bold text-gray-700">
-                    💌 Catatan balasan dari kamu (opsional sih):
-                </label>
-                <textarea id="custom-note" rows="2"
-                    placeholder="Contoh: Awas ya kalau nakal! Malam ini wajib mabar & call..."
-                    class="w-full rounded-2xl border-2 border-pink-200 focus:border-rose-400 focus:outline-none p-2.5 text-xs text-gray-700 bg-pink-50/40 resize-none transition"></textarea>
-            </div>
-
-            <!-- Tombol Aksi Kirim WhatsApp & Salin Pesan -->
-            <div class="flex flex-col gap-2 pt-1">
-                <button onclick="sendToWhatsApp()"
-                    class="w-full min-h-[48px] bg-gradient-to-r from-green-500 to-emerald-600 active:from-green-600 active:to-emerald-700 text-white font-fredoka font-semibold py-3 px-4 rounded-2xl shadow-lg shadow-emerald-200 transition transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer text-sm">
-                    <span>Kirim ke WhatsApp ❤️</span>
-                </button>
-
-                <button onclick="copyMessage()"
-                    class="w-full min-h-[44px] bg-rose-100 active:bg-rose-200 text-rose-700 font-fredoka font-semibold py-2.5 px-4 rounded-2xl transition transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer text-xs">
-                    <span>Salin Pesan 📋</span>
-                </button>
-            </div>
-        </section>
     </main>
 
-    <!-- NOTIFIKASI TOAST (Pengganti alert) -->
-    <div id="toast-notification"
-        class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[360px] justify-center bg-gray-900/90 text-white text-xs font-semibold px-4 py-3 rounded-full shadow-xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2 text-center">
-        <span id="toast-icon">✅</span>
-        <span id="toast-text">Pesan berhasil disalin!</span>
+    <!-- HALAMAN FINAL / ENDING MERIAH (TERSEMBUNYI AWALNYA) -->
+    <section id="celebration-card" class="hidden relative z-10 w-full max-w-md bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border-2 border-rose-200 p-6 sm:p-8 text-center transition-all duration-500">
+        
+        <!-- Ilustrasi Beruang Senang / Pelukan -->
+        <div class="w-32 h-32 mx-auto mb-2 animate-bounce">
+            <svg viewBox="0 0 200 200" class="w-full h-full">
+                <circle cx="52" cy="58" r="24" fill="#d97706" />
+                <circle cx="52" cy="58" r="13" fill="#fde68a" />
+                <circle cx="148" cy="58" r="24" fill="#d97706" />
+                <circle cx="148" cy="58" r="13" fill="#fde68a" />
+                <ellipse cx="100" cy="105" rx="68" ry="60" fill="#f59e0b" />
+                <ellipse cx="55" cy="115" rx="15" ry="9" fill="#f43f5e" opacity="0.75" />
+                <ellipse cx="145" cy="115" rx="15" ry="9" fill="#f43f5e" opacity="0.75" />
+                <ellipse cx="100" cy="122" rx="28" ry="22" fill="#fef3c7" />
+                <ellipse cx="100" cy="112" rx="10" ry="7" fill="#451a03" />
+                <!-- Senyum Bahagia -->
+                <path d="M 85 126 Q 100 142 115 126" stroke="#451a03" stroke-width="4" fill="none" stroke-linecap="round" />
+                <!-- Mata Berbinar / Tertawa -->
+                <path d="M 62 95 Q 72 82 82 95" stroke="#1e293b" stroke-width="4.5" fill="none" stroke-linecap="round" />
+                <path d="M 118 95 Q 128 82 138 95" stroke="#1e293b" stroke-width="4.5" fill="none" stroke-linecap="round" />
+                <!-- Hati di atas kepala -->
+                <path d="M 100 25 C 90 10, 68 18, 100 44 C 132 18, 110 10, 100 25 Z" fill="#f43f5e" />
+            </svg>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-rose-600 mb-2">
+            Yeayyy maaciii! 🥰🎉
+        </h2>
+        <p class="text-sm text-slate-600 mb-5 leading-relaxed">
+            Kamu memang terbaikk, tercabarrr, dan paling gemeciinn sedunia! Kuusahain bakal selalu bikin kamu senyum terus yaaa ❤️
+        </p>
+
+        <!-- Pilihan Hadiah / Traktiran Baikan -->
+        <div class="bg-rose-50/80 border border-rose-200 rounded-2xl p-4 mb-5 text-left">
+            <p class="text-xs font-bold text-rose-700 uppercase tracking-wider mb-2.5 text-center">
+                🎁 Pilih Hadiah Baikan Kamu:
+            </p>
+            <div class="grid grid-cols-2 gap-2" id="treat-options">
+                <button type="button" onclick="selectTreat(this, 'Dijajanin mammm')" class="treat-btn active-treat bg-rose-500 text-white border-2 border-rose-500 p-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>🍜</span> <span>Traktir Mamm</span>
+                </button>
+                <button type="button" onclick="selectTreat(this, 'Call sepuasnyaaa sampe bobooo')" class="treat-btn bg-white text-slate-700 border-2 border-rose-200 hover:border-rose-400 p-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                    <span>🛍️</span> <span>Call Sepuasnyaaa</span>
+                </button>
+                <button type="button" onclick="selectTreat(this, 'Main emeelll sampe lemeess')" class="treat-btn bg-white text-slate-700 border-2 border-rose-200 hover:border-rose-400 p-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                    <span>🎬</span> <span>Main emeelll</span>
+                </button>
+                <button type="button" onclick="selectTreat(this, 'Tium banya banyaaa sambil manjaaa')" class="treat-btn bg-white text-slate-700 border-2 border-rose-200 hover:border-rose-400 p-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                    <span>🤗</span> <span>Tium banya banyaaa</span>
+                </button>
+            </div>
+        </div>
+
+
+
+        <!-- Tombol Utama Kirim ke WhatsApp -->
+        <a id="wa-link" href="#" target="_blank" rel="noopener noreferrer" class="w-full bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg shadow-emerald-200 transition transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 text-sm sm:text-base">
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/>
+            </svg>
+            <span>Kirim bukti gamarah ❤️</span>
+        </a>
+    </section>
+
+    <!-- MODAL EASTER EGG: BINGKAI POLAROID FOTO PACAR -->
+    <div id="easter-egg-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 transition-opacity">
+        <div class="relative w-full max-w-sm animate-[fadeIn_0.3s_ease-out]">
+            <!-- Tombol Tutup Modal -->
+            <button onclick="closeEasterEgg()" class="absolute -top-3 -right-3 z-20 bg-rose-500 text-white w-9 h-9 rounded-full shadow-lg font-bold flex items-center justify-center hover:bg-rose-600 transition active:scale-90">
+                ✕
+            </button>
+
+            <!-- Kartu Polaroid -->
+            <div class="polaroid-card rounded-2xl relative">
+                <!-- Selotip Lucu di Atas Polaroid -->
+                <div class="w-24 h-6 bg-rose-200/80 backdrop-blur-xs mx-auto -mt-6 mb-3 rounded-xs transform -rotate-1 shadow-xs"></div>
+
+                <!-- Bingkai Foto -->
+                <div class="relative aspect-square w-full bg-rose-100 rounded-xl overflow-hidden border border-rose-100 group">
+                    <!-- GANTI SRC DI BAWAH INI DENGAN URL FOTO PACARMU ATAU UPLOAD LANGSUNG DI WEB -->
+                    <img id="gf-photo" 
+                         src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80" 
+                         onerror="this.src='https://placehold.co/600x600/ffe4e6/e11d48?text=Foto+Kesayangan+%E2%9D%A4%EF%B8%8F'"
+                         alt="Foto Kesayangan" 
+                         class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                    
+                    <!-- Stiker Hati di Sudut Foto -->
+                    <div class="absolute bottom-2 right-2 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-full text-xs font-bold text-rose-500 shadow">
+                        Cantipp angettt 🥺✨
+                    </div>
+                </div>
+
+                <!-- Caption Gombalan Tulisan Tangan -->
+                <div class="mt-4 text-center px-2">
+                    <p id="polaroid-caption" class="font-handwriting text-2xl sm:text-3xl text-slate-800 leading-snug">
+                        "Alasan kenapa aku gabisa lama lama jauh dari kamu ❤️"
+                    </p>
+                    <p class="text-[11px] text-slate-400 mt-1 font-medium">
+                        (Gimana mau jauh kalau cewenya segemes ini? 🫣)
+                    </p>
+                </div>
+
+                <!-- Fitur Ganti Foto Sendiri (Praktis sebelum link dikirim atau saat dibuka bareng) -->
+
+            </div>
+        </div>
     </div>
 
     <script>
         // ==========================================
-        // 0. HELPER GETARAN HAPTIC & TAP ANYWHERE HEARTS
+        // KONFIGURASI UTAMA (BISA DIEDIT SESUAI SELERA)
         // ==========================================
-        function triggerHaptic(pattern = 25) {
+        const CONFIG = {
+            waNumber: "6285111370799", // Format internasional dari 085111370799
+            defaultTreat: "Makan Enak / Seblak & Boba 🍜🧋",
+            // Ganti link di bawah ini jika ingin menanamkan foto secara permanen di kode:
+            defaultPhotoUrl: "foto1.jpg"
+        };
+
+        // Daftar pesan memelas lucu saat tombol "Masih Marah" ditekan/dihindari
+        const pleadMessages = [
+            "Eits, nggak kena! Coba klik yang pink aja 😜",
+            "Yakin masih mau marah sama yang imut ini? 🥺",
+            "Tombol ini lagi rusak sayang, jangan dipencet!",
+            "Jangan gitu dong sayangku, nanti cantiknya luntur loh 💕",
+            "Aku traktir seblak + boba + es krim deh! Gimana? 🧋🍦",
+            "Plisss maafin aku, aku kangen banget tauuu 🥹",
+            "Klik 'Iya, Aku Maafin' sekarang, gratis peluk sepuasnya! 🤗",
+            "Udah dong ngambeknya, tombol merahnya udah nyerah nih 😂"
+        ];
+
+        let dodgeCount = 0;
+        let selectedTreat = CONFIG.defaultTreat;
+        let soundEnabled = false;
+
+        // ==========================================
+        // EFEK SUARA LUCU MENGGUNAKAN TONE.JS
+        // ==========================================
+        let synth = null;
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            icon.textContent = soundEnabled ? '🔊' : '🔇';
+            if (soundEnabled && !synth) {
+                Tone.start();
+                synth = new Tone.PolySynth(Tone.Synth).toDestination();
+                synth.volume.value = -8;
+            }
+            if (soundEnabled) playNote("C5", "16n");
+        }
+
+        function playNote(note, duration = "16n") {
+            if (!soundEnabled || !synth) return;
             try {
-                if (navigator && typeof navigator.vibrate === 'function') {
-                    navigator.vibrate(pattern);
-                }
-            } catch (e) {
-                // Abaikan jika browser tidak mendukung vibrate
+                synth.triggerAttackRelease(note, duration);
+            } catch (e) {}
+        }
+
+        function playCelebrationChime() {
+            if (!soundEnabled || !synth) return;
+            try {
+                const now = Tone.now();
+                synth.triggerAttackRelease("C5", "16n", now);
+                synth.triggerAttackRelease("E5", "16n", now + 0.1);
+                synth.triggerAttackRelease("G5", "16n", now + 0.2);
+                synth.triggerAttackRelease("C6", "8n", now + 0.3);
+            } catch (e) {}
+        }
+
+        // ==========================================
+        // LOGIKA TOMBOL KABUR ("MASIH MARAH")
+        // ==========================================
+        function dodgeButton(e) {
+            if (e && e.type === 'touchstart') {
+                e.preventDefault(); // Mencegah klik tidak sengaja di layar sentuh
+            }
+
+            dodgeCount++;
+            playNote("G4", "32n");
+
+            const btnReject = document.getElementById('btn-reject');
+            const btnForgive = document.getElementById('btn-forgive');
+            const pleadBanner = document.getElementById('plead-banner');
+            const secretHint = document.getElementById('secret-hint');
+
+            // 1. Tampilkan pesan memelas
+            const msgIndex = (dodgeCount - 1) % pleadMessages.length;
+            pleadBanner.textContent = pleadMessages[msgIndex];
+            pleadBanner.classList.remove('hidden');
+
+            // 2. Perbesar tombol "Maafin" secara bertahap (maksimal agar tetap muat di layar HP)
+            const newScale = Math.min(1 + dodgeCount * 0.08, 1.45);
+            btnForgive.style.transform = `scale(${newScale})`;
+
+            // 3. Perkecil & pindahkan tombol "Masih Marah" secara acak di dalam viewport aman
+            const rejectScale = Math.max(1 - dodgeCount * 0.05, 0.7);
+            btnReject.style.position = 'fixed';
+            btnReject.style.zIndex = '35';
+
+            // Hitung batas layar aman agar tombol tidak keluar layar HP
+            const padding = 24;
+            const maxX = window.innerWidth - btnReject.offsetWidth - padding;
+            const maxY = window.innerHeight - btnReject.offsetHeight - padding;
+
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(70, Math.floor(Math.random() * maxY));
+
+            btnReject.style.left = `${randomX}px`;
+            btnReject.style.top = `${randomY}px`;
+            btnReject.style.transform = `scale(${rejectScale}) rotate(${(Math.random() * 20 - 10)}deg)`;
+            btnReject.textContent = dodgeCount > 4 ? "Nggak bisa diklik 😜" : "Eits kabur 🏃‍♂️";
+
+            // 4. Munculkan petunjuk Easter Egg setelah 3 kali mencoba menolak
+            if (dodgeCount >= 3) {
+                secretHint.classList.remove('hidden');
+                document.getElementById('easter-egg-label').textContent = "Bukti Rahasia! 👀";
             }
         }
 
-        // Munculkan hati kecil setiap kali layar HP disentuh di mana saja
-        document.addEventListener('pointerdown', (e) => {
-            const tapHeart = document.createElement('div');
-            const hearts = ['💖', '💕', '💗', '✨', '🌸'];
-            tapHeart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
-            tapHeart.className = 'tap-heart text-xl';
-            tapHeart.style.left = `${e.clientX}px`;
-            tapHeart.style.top = `${e.clientY}px`;
-            document.body.appendChild(tapHeart);
-
-            setTimeout(() => {
-                tapHeart.remove();
-            }, 900);
-        });
-
         // ==========================================
-        // 1. LOGIKA LATAR BELAKANG HATI MELAYANG
+        // LOGIKA EASTER EGG (FOTO POLAROID PACAR)
         // ==========================================
-        function createFloatingHeart() {
-            const container = document.getElementById('hearts-bg');
-            if (!container) return;
+        function openEasterEgg() {
+            playNote("E5", "16n");
+            const modal = document.getElementById('easter-egg-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
 
-            const heart = document.createElement('div');
-            const emojis = ['❤️', '💖', '🌸', '✨', '💕', '🧸'];
-            heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-            heart.className = 'floating-heart';
-
-            const size = Math.random() * 16 + 13;
-            const left = Math.random() * 94 + 3;
-            const duration = Math.random() * 5 + 6;
-
-            heart.style.left = `${left}vw`;
-            heart.style.fontSize = `${size}px`;
-            heart.style.animationDuration = `${duration}s`;
-
-            container.appendChild(heart);
-
-            setTimeout(() => {
-                heart.remove();
-            }, duration * 1000);
+            // Tembakkan confetti hati kecil saat modal terbuka
+            confetti({
+                particleCount: 45,
+                spread: 60,
+                origin: { y: 0.6 },
+                colors: ['#fb7185', '#f43f5e', '#fda4af', '#fbbf24']
+            });
         }
 
-        setInterval(createFloatingHeart, 750);
-
-        // ==========================================
-        // 2. LOGIKA TOMBOL 'ENGGAK MAU!' KABUR DI LAYAR HP
-        // ==========================================
-        const btnNo = document.getElementById('btn-no');
-        const btnYes = document.getElementById('btn-yes');
-        const pleaBubble = document.getElementById('plea-bubble');
-        const bearStage = document.getElementById('bear-stage');
-        const bearPleaHeart = document.getElementById('bear-plea-heart');
-
-        let noClickCount = 0;
-        let yesScale = 1;
-        let isBtnNoDetached = false;
-        let lastDodgeTime = 0;
-
-        const funnyNoTexts = [
-            "Yakin nih? 🥺",
-            "Jangan pencet yang ini 😭",
-            "Nanti aku traktir makan! 🍔",
-            "Plisss sayangkuuu 💕",
-            "Tombolnya rusak nih!",
-            "Pencet yang hijau aja 👉",
-            "Aku janji gak ulangin lagi 🤞",
-            "Nanti malam mabar ML deh! 🎮",
-            "Gak kena wleee 😜",
-            "Udah gede tombol hijaunya tuh!"
-        ];
-
-        const pleaMessages = [
-            "🥺 Tuh kan tombolnya aja gak mau kamu sentuh...",
-            "🍔 Gimana kalau ditambah traktir makan favoritmu?",
-            "😭 Beruangnya makin nangis deras nih kalau kamu tolak terus...",
-            "👉👈 Tombol hijau di atas udah gede banget tuh, pencet yuk!",
-            "💖 Udah ya ngambeknya, aku kangen banget nih!"
-        ];
-
-        function dodgeNoButton(e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            // Cegah double-trigger beruntun dalam <80ms dari touchstart + pointerdown + click
-            const now = Date.now();
-            if (now - lastDodgeTime < 80) return;
-            lastDodgeTime = now;
-
-            // 1. Jika pertama kali kabur, pindahkan langsung ke document.body
-            //    agar bebas dari efek transform/backdrop-filter milik #main-card
-            if (!isBtnNoDetached) {
-                const currentRect = btnNo.getBoundingClientRect();
-                document.body.appendChild(btnNo);
-                btnNo.style.position = 'fixed';
-                btnNo.style.zIndex = '9999';
-                btnNo.style.margin = '0';
-                btnNo.style.left = `${currentRect.left}px`;
-                btnNo.style.top = `${currentRect.top}px`;
-                isBtnNoDetached = true;
-                // Force reflow agar browser membaca koordinat awal sebelum transisi ke posisi baru
-                void btnNo.offsetWidth;
-            }
-
-            noClickCount++;
-            triggerHaptic([35, 25, 35]);
-
-            // 2. Ubah teks tombol 'Enggak Mau!' secara acak
-            const nextText = funnyNoTexts[noClickCount % funnyNoTexts.length];
-            btnNo.innerText = nextText;
-
-            // 3. Hitung batas aman layar HP (padding 16px dari tepi viewport)
-            const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
-            const viewportHeight = document.documentElement.clientHeight || window.innerHeight;
-            const padding = 16;
-
-            const btnWidth = btnNo.offsetWidth || 145;
-            const btnHeight = btnNo.offsetHeight || 46;
-
-            const minX = padding;
-            const maxX = Math.max(padding, viewportWidth - btnWidth - padding);
-            const minY = padding;
-            const maxY = Math.max(padding, viewportHeight - btnHeight - padding);
-
-            // Ambil titik referensi sentuhan atau posisi tombol saat ini
-            const prevRect = btnNo.getBoundingClientRect();
-            let touchX = prevRect.left + btnWidth / 2;
-            let touchY = prevRect.top + btnHeight / 2;
-
-            if (e) {
-                if (e.touches && e.touches.length > 0) {
-                    touchX = e.touches[0].clientX;
-                    touchY = e.touches[0].clientY;
-                } else if (typeof e.clientX === 'number' && typeof e.clientY === 'number') {
-                    touchX = e.clientX;
-                    touchY = e.clientY;
-                }
-            }
-
-            // Ambil bounding box tombol hijau 'Iya, Aku Maafin ❤️' agar tidak tertimpa
-            const yesRect = btnYes.getBoundingClientRect();
-
-            let newX = minX;
-            let newY = minY;
-            let bestCandidate = null;
-            let bestScore = -1;
-
-            // Cari kandidat koordinat acak yang jaraknya minimal 100px dari titik sentuh & tidak menimpa tombol hijau
-            for (let i = 0; i < 40; i++) {
-                const candidateX = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
-                const candidateY = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
-
-                const centerX = candidateX + btnWidth / 2;
-                const centerY = candidateY + btnHeight / 2;
-
-                const distFromTouch = Math.hypot(centerX - touchX, centerY - touchY);
-                const distFromPrev = Math.hypot(candidateX - prevRect.left, candidateY - prevRect.top);
-
-                // Cek tabrakan dengan tombol hijau (beri margin aman 14px)
-                const overlapsYes = !(
-                    candidateX + btnWidth < yesRect.left - 14 ||
-                    candidateX > yesRect.right + 14 ||
-                    candidateY + btnHeight < yesRect.top - 14 ||
-                    candidateY > yesRect.bottom + 14
-                );
-
-                if (!overlapsYes && distFromTouch >= 100 && distFromPrev >= 100) {
-                    newX = candidateX;
-                    newY = candidateY;
-                    bestCandidate = { x: candidateX, y: candidateY };
-                    break;
-                }
-
-                // Simpan kandidat terbaik jika layar terlalu sempit
-                const score = (overlapsYes ? -1000 : 0) + Math.min(distFromTouch, distFromPrev);
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestCandidate = { x: candidateX, y: candidateY };
-                }
-            }
-
-            if (bestCandidate) {
-                newX = Math.min(Math.max(bestCandidate.x, minX), maxX);
-                newY = Math.min(Math.max(bestCandidate.y, minY), maxY);
-            }
-
-            // Terapkan koordinat baru murni via left & top (tanpa transform)
-            btnNo.style.left = `${newX}px`;
-            btnNo.style.top = `${newY}px`;
-
-            // 4. Perbesar tombol hijau 'Iya, Aku Maafin ❤️' secara bertahap (menggunakan padding & font-size agar tidak bertabrakan dengan layout)
-            yesScale = Math.min(yesScale + 0.08, 1.55);
-            btnYes.style.fontSize = `${Math.round(16 * yesScale)}px`;
-            btnYes.style.paddingTop = `${Math.round(12 * yesScale)}px`;
-            btnYes.style.paddingBottom = `${Math.round(12 * yesScale)}px`;
-            btnYes.style.maxWidth = `${Math.min(260 + noClickCount * 14, 350)}px`;
-
-            // 5. Munculkan gelembung rayuan lucu & ekspresi beruang semakin memelas
-            pleaBubble.classList.remove('hidden');
-            pleaBubble.innerText = pleaMessages[(noClickCount - 1) % pleaMessages.length];
-
-            if (noClickCount >= 2) {
-                document.body.classList.add('super-sad');
-                if (bearPleaHeart) bearPleaHeart.classList.remove('hidden');
-            }
+        function closeEasterEgg() {
+            const modal = document.getElementById('easter-egg-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
-        // Pasang semua event sentuhan, pointer, mouse, dan klik pada tombol 'Enggak Mau!'
-        btnNo.addEventListener('touchstart', dodgeNoButton, { passive: false });
-        btnNo.addEventListener('pointerdown', dodgeNoButton);
-        btnNo.addEventListener('mouseenter', dodgeNoButton);
-        btnNo.addEventListener('click', dodgeNoButton);
+        // Fitur unggah foto dari galeri HP/komputer & simpan sementara di localStorage
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgElement = document.getElementById('gf-photo');
+                imgElement.src = e.target.result;
+                try {
+                    localStorage.setItem('custom_gf_photo', e.target.result);
+                } catch (err) {
+                    // Abaikan jika ukuran gambar melebihi kuota localStorage
+                }
+            };
+            reader.readAsDataURL(file);
+        }
 
         // ==========================================
-        // 3. LOGIKA SAAT PERMINTAAN MAAF DITERIMA
+        // LOGIKA HALAMAN FINAL / PERAYAAN & WHATSAPP
         // ==========================================
         function acceptApology() {
-            triggerHaptic([40, 30, 80]);
+            playCelebrationChime();
 
-            // Sembunyikan tombol 'Enggak Mau!' (baik di dalam card maupun di document.body)
-            if (btnNo) {
-                btnNo.style.display = 'none';
-            }
+            // Sembunyikan kartu permintaan maaf & tombol kabur
+            document.getElementById('apology-card').classList.add('hidden');
+            const btnReject = document.getElementById('btn-reject');
+            if (btnReject) btnReject.classList.add('hidden');
 
-            // Buka kunci scroll agar layar kupon baikan nyaman di-scroll pada HP kecil
-            document.body.classList.remove('lock-scroll');
-            document.body.classList.remove('super-sad');
+            // Tampilkan kartu perayaan
+            const celebrationCard = document.getElementById('celebration-card');
+            celebrationCard.classList.remove('hidden');
 
-            // Ganti layar permintaan maaf ke layar perayaan & kupon
-            document.getElementById('apology-screen').classList.add('hidden');
-            document.getElementById('celebration-screen').classList.remove('hidden');
+            // Update link WhatsApp awal
+            updateWhatsAppLink();
 
-            // Luncurkan konfeti meriah
-            if (typeof confetti === 'function') {
+            // Efek Confetti Meriah!
+            launchCelebrationConfetti();
+        }
+
+        function selectTreat(btnElement, treatText) {
+            playNote("A5", "32n");
+            selectedTreat = treatText;
+
+            // Reset style semua tombol pilihan
+            document.querySelectorAll('.treat-btn').forEach(btn => {
+                btn.classList.remove('bg-rose-500', 'text-white', 'border-rose-500', 'shadow-sm');
+                btn.classList.add('bg-white', 'text-slate-700', 'border-rose-200');
+            });
+
+            // Aktifkan style tombol yang dipilih
+            btnElement.classList.remove('bg-white', 'text-slate-700', 'border-rose-200');
+            btnElement.classList.add('bg-rose-500', 'text-white', 'border-rose-500', 'shadow-sm');
+
+            updateWhatsAppLink();
+        }
+
+        function updateWhatsAppLink() {
+            const message = `Hai sayangku ❤️ Aku udah maafin kamu kok! 🥺✨\n\nSebagai gantinya, aku mau klaim hadiah ini: *${selectedTreat}* 🥳💕`;
+            const encodedMessage = encodeURIComponent(message);
+            const waUrl = `https://wa.me/${CONFIG.waNumber}?text=${encodedMessage}`;
+            document.getElementById('wa-link').href = waUrl;
+        }
+
+        function launchCelebrationConfetti() {
+            const duration = 2500;
+            const end = Date.now() + duration;
+
+            (function frame() {
                 confetti({
-                    particleCount: 85,
-                    spread: 70,
-                    origin: { y: 0.65 }
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#f43f5e', '#fb7185', '#fbbf24', '#34d399']
                 });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#f43f5e', '#fb7185', '#fbbf24', '#34d399']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        // ==========================================
+        // ANIMASI HATI MELAYANG DI LATAR BELAKANG
+        // ==========================================
+        function createFloatingHearts() {
+            const container = document.getElementById('hearts-bg');
+            const emojis = ['❤️', '💕', '💖', '🌸', '✨', '🥺'];
+
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                heart.style.left = `${Math.random() * 100}vw`;
+                heart.style.fontSize = `${Math.random() * 14 + 14}px`;
+                heart.style.animationDuration = `${Math.random() * 5 + 6}s`;
+                container.appendChild(heart);
+
                 setTimeout(() => {
-                    confetti({
-                        particleCount: 55,
-                        angle: 60,
-                        spread: 55,
-                        origin: { x: 0, y: 0.7 }
-                    });
-                    confetti({
-                        particleCount: 55,
-                        angle: 120,
-                        spread: 55,
-                        origin: { x: 1, y: 0.7 }
-                    });
-                }, 300);
-            }
+                    heart.remove();
+                }, 11000);
+            }, 900);
         }
 
-        // ==========================================
-        // 4. LOGIKA PILIH KUPON BAIKAN & WHATSAPP
-        // ==========================================
-        const selectedCoupons = new Set();
-
-        function toggleCoupon(cardEl, couponName) {
-            triggerHaptic(20);
-            if (selectedCoupons.has(couponName)) {
-                selectedCoupons.delete(couponName);
-                cardEl.classList.remove('selected');
+        // Inisialisasi saat halaman dimuat
+        window.onload = function() {
+            createFloatingHearts();
+            // Cek apakah ada foto yang pernah diunggah sebelumnya
+            const savedPhoto = localStorage.getItem('custom_gf_photo');
+            if (savedPhoto) {
+                document.getElementById('gf-photo').src = savedPhoto;
             } else {
-                selectedCoupons.add(couponName);
-                cardEl.classList.add('selected');
+                document.getElementById('gf-photo').src = CONFIG.defaultPhotoUrl;
             }
-        }
-
-        function buildFinalMessage() {
-            const customNote = document.getElementById('custom-note').value.trim();
-            let message = "Hai sayang! Aku udah maafin kamu kok 🥰❤️\n\n";
-
-            if (selectedCoupons.size > 0) {
-                message += "Ini Kupon Baikan yang aku klaim ya (wajib dikabulin):\n";
-                selectedCoupons.forEach(coupon => {
-                    message += `• ${coupon}\n`;
-                });
-            } else {
-                message += "• Aku maafin gratis tanpa syarat (tapi jangan diulangin ya!) 💕\n";
-            }
-
-            if (customNote) {
-                message += `\n💌 Catatan balasan dari aku:\n"${customNote}"\n`;
-            }
-
-            message += "\nYuk baikan! Kangen nih 🤗✨";
-            return message;
-        }
-
-        function sendToWhatsApp() {
-            triggerHaptic(30);
-            const message = buildFinalMessage();
-            const encodedText = encodeURIComponent(message);
-            const waUrl = `https://wa.me/6285111370799?text=${encodedText}`;
-            window.open(waUrl, '_blank');
-        }
-
-        function showToast(text, icon = '✅') {
-            const toast = document.getElementById('toast-notification');
-            const toastText = document.getElementById('toast-text');
-            const toastIcon = document.getElementById('toast-icon');
-
-            toastText.innerText = text;
-            toastIcon.innerText = icon;
-            toast.classList.remove('opacity-0');
-            toast.classList.add('opacity-100');
-
-            setTimeout(() => {
-                toast.classList.remove('opacity-100');
-                toast.classList.add('opacity-0');
-            }, 2500);
-        }
-
-        function copyMessage() {
-            triggerHaptic(25);
-            const message = buildFinalMessage();
-
-            const tempTextarea = document.createElement('textarea');
-            tempTextarea.value = message;
-            tempTextarea.style.position = 'fixed';
-            tempTextarea.style.opacity = '0';
-            document.body.appendChild(tempTextarea);
-            tempTextarea.select();
-            tempTextarea.setSelectionRange(0, 99999);
-
-            try {
-                document.execCommand('copy');
-                showToast('Pesan balasan berhasil disalin!', '📋');
-            } catch (err) {
-                showToast('Gagal menyalin pesan, coba lagi ya!', '⚠️');
-            } finally {
-                tempTextarea.remove();
-            }
-        }
+        };
     </script>
 </body>
 </html>
